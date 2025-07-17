@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "C. D. Bezerra"
+    given-names: "Lucas"
+    orcid: "https://orcid.org/0000-0002-3967-4374"
+  - family-names: "M. G. dos Santos"
+    given-names: "Ataíde"
+    orcid: "https://orcid.org/0000-0003-2725-1734"
+  - family-names: "Park"
+    given-names: "Shinkyu"
+    orcid: "https://orcid.org/0000-0002-8643-404X"
+title: "Learning Policies for Dynamic Coalition Formation in Multi-Robot Task Allocation"
+version: "1.0.0"
+date-released: 2025-02-22
+url: "https://github.com/lcdbezerra/marl_mrt2a"
+license: MIT
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "C. D. Bezerra"
+      given-names: "Lucas"
+      orcid: "https://orcid.org/0000-0002-3967-4374"
+    - family-names: "M. G. dos Santos"
+      given-names: "Ataíde"
+      orcid: "https://orcid.org/0000-0003-2725-1734"
+    - family-names: "Park"
+      given-names: "Shinkyu"
+      orcid: "https://orcid.org/0000-0002-8643-404X"
+  title: "Learning Policies for Dynamic Coalition Formation in Multi-Robot Task Allocation"
+  year: 2025
+  archive: "arXiv"
+  eprint: "2412.20397"
+  url: "https://arxiv.org/abs/2412.20397"
