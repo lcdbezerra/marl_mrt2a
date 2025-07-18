@@ -45,10 +45,10 @@ We implement our experiments in a custom Gym environment called **GyMRT²A**, wh
 
 ## Repository Structure
 
-```
+<!-- ```
 marl_mrt2a/
 ├── marl_mrt2a/
-│   ├── env/               # MRT2A environment
+│   ├── env/               # GyMRT²A environment
 │   ├── PCFA/              # Baseline implementation
 │   ├── marl/              # Our method's implementation
 │   └── examples/          # Reproducible experiments
@@ -56,6 +56,17 @@ marl_mrt2a/
 │       ├── generalizability/   # Generalization over task settings
 │       ├── scalability/        # Scalability (w.r.t number of robots)
 │       └── watch_episode/      # Visualization and monitoring
+├── LICENSE
+└── README.md
+``` -->
+```
+marl_mrt2a/
+├── marl_mrt2a/
+│   ├── env/               # GyMRT²A environment
+│   ├── PCFA/              # Baseline implementation
+│   ├── marl/              # Our method's implementation
+│   └── examples/          # Reproducible experiments
+│       └── main_comparison/    # Comparison with baseline and ablation studies
 ├── LICENSE
 └── README.md
 ```
@@ -88,6 +99,8 @@ conda install pip -y
 ```bash
 cd env
 pip install -e .
+pip install -U pygame --user
+conda install -c conda-forge libstdcxx-ng
 cd ../PCFA
 pip install -e .
 cd ../
@@ -97,6 +110,7 @@ cd ../
 ```bash
 cd marl
 pip install wandb
+wandb login
 pip install -r requirements.txt
 ```
 
@@ -171,3 +185,8 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Third-Party Code
+
+This repository includes code under the Apache License 2.0:
+- `astar.py` – A* pathfinding implementation from [Red Blob Games](https://www.redblobgames.com/pathfinding/a-star/), Copyright 2014 Red Blob Games, licensed under Apache License 2.0. Adapted by Lucas C. D. Bezerra.
