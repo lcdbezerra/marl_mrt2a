@@ -1,0 +1,117 @@
+This project contains derivative works and modifications based on multiple open source projects:
+
+================================================================================
+EPYMARL-BASED CODE (marl_mrt2a/marl/)
+================================================================================
+
+The code in marl_mrt2a/marl/ is based on EPyMARL (Extended Python MARL framework):
+- Original EPyMARL: https://github.com/uoe-agents/epymarl
+- EPyMARL License: Apache License 2.0
+- EPyMARL is itself based on PyMARL: https://github.com/oxwhirl/pymarl
+- PyMARL License: Apache License 2.0
+
+Modifications made to EPyMARL by Lucas C. D. Bezerra (2025):
+- Integration with `gymrt2a` environment
+- Addition of CNN-based agents and critics for spatial environments
+- Custom action selection and filtering for grid-based tasks
+- Multi-dimensional action, observation, and state spaces
+- Spatial action interfaces and intention sharing mechanisms
+
+================================================================================
+ORIGINAL EPYMARL NOTICE (PyMARL modifications)
+================================================================================
+
+The following files have been modified compared to the original PyMARL codebase:
+- src/components/action_selectors.py
+- src/controllers/__init__.py
+- src/controllers/basic_controller.py
+- src/learners/__init__.py
+- src/learners/coma_learner.py
+- src/learners/q_learner.py
+- src/modules/agents/__init__.py
+- src/modules/agents/rnn_agent.py
+- src/modules/critics/__init__.py
+- src/modules/critics/coma.py
+- src/runners/parallel_runner.py
+- src/utils/logging.py
+- src/config/envs/sc2.py
+- src/config/algs/*
+
+The following files have been added compared to the original PyMARL codebase:
+- src/controllers/maddpg_controller.py
+- src/controllers/non_shared_controller.py
+- src/config/algs/*
+- src/config/envs/gymma.yaml
+- src/learners/actor_critic_learner.py
+- src/learners/maddpg_learner.py
+- src/learners/ppo_learner.py
+- src/modules/agents/rnn_ns_agent.py
+- src/modules/critics/centralV.py
+- src/modules/critics/centralV_ns.py
+- src/modules/critics/coma_ns.py
+- src/modules/critics/ac.py
+- src/modules/critics/ac_ns.py
+- src/modules/critics/maddpg.py
+- src/modules/critics/maddpg_ns.py
+- src/modules/critics/mlp.py
+- src/pretrained/*
+
+================================================================================
+GYMRT2A ENVIRONMENT (marl_mrt2a/env/)
+================================================================================
+
+Original implementation by Lucas C. D. Bezerra (2025):
+- Multi-robot task allocation grid environment
+- Supports agent communication and intention sharing
+- CNN-based spatial observation spaces
+- Integration with various pathfinding and coordination algorithms
+- Support for different task levels and reward structures
+
+Components include:
+- marl_mrt2a/env/gymrt2a/ - Complete environment implementation
+- Grid-based multi-agent coordination
+- Communication and intention sharing mechanisms
+- Spatial action interfaces
+- Custom rendering and visualization
+
+================================================================================
+PCFA ALGORITHM (marl_mrt2a/PCFA/)
+================================================================================
+
+Original implementation by Lucas C. D. Bezerra (2025):
+- Project Manager-oriented Coalition Formation Algorithm
+- Market-based multi-agent task allocation
+- Integration with gymrt2a environment
+- A* pathfinding integration
+- Communication and consensus mechanisms
+
+================================================================================
+ANALYSIS AND COMPARISON TOOLS (marl_mrt2a/examples/)
+================================================================================
+
+Original implementation by Lucas C. D. Bezerra (2025):
+- Comprehensive comparison framework for MARL algorithms
+- Integration with Weights & Biases for experiment tracking
+- Baseline implementations (PCFA, hardcoded heuristics)
+- Performance analysis and visualization tools
+- Automated experiment execution and data collection
+
+================================================================================
+A* PATHFINDING COMPONENT
+================================================================================
+
+The A* pathfinding implementation in marl_mrt2a/env/gymrt2a/astar.py is based on
+algorithms from Red Blob Games, licensed under Apache License 2.0.
+Original: https://www.redblobgames.com/pathfinding/a-star/
+Adapted by Lucas C. D. Bezerra (2025).
+
+================================================================================
+THIRD-PARTY LICENSES
+================================================================================
+
+This project incorporates code under the following licenses:
+- Apache License 2.0: EPyMARL, PyMARL, A* pathfinding components
+- See respective LICENSE files and source headers for complete license texts.
+
+All modifications and original code by Lucas C. D. Bezerra are licensed under
+Apache License 2.0, consistent with the underlying frameworks. 

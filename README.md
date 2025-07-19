@@ -1,6 +1,6 @@
 # Learning Policies for Dynamic Coalition Formation in Multi-Robot Task Allocation
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/release/python-380/)
 [![arXiv](https://img.shields.io/badge/arXiv-2412.20397-b31b1b.svg)](https://arxiv.org/abs/2412.20397)
 
@@ -184,9 +184,12 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+For information about derivative works and third-party components, see the [NOTICE](NOTICE) file.
 
 ## Third-Party Code
 
 This repository includes code under the Apache License 2.0:
+- Multi-agent reinforcement learning framework based on [EPyMARL](https://github.com/uoe-agents/epymarl) and [PyMARL](https://github.com/oxwhirl/pymarl)
 - `astar.py` – A* pathfinding implementation from [Red Blob Games](https://www.redblobgames.com/pathfinding/a-star/), Copyright 2014 Red Blob Games, licensed under Apache License 2.0. Adapted by Lucas C. D. Bezerra.
