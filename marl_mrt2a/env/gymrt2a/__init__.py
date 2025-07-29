@@ -16,4 +16,3 @@ from .object import Object
 
 # Utilities and wrappers
 from .utils import *
-from .wrapper import *

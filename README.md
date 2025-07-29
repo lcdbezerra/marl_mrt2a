@@ -90,27 +90,31 @@ cd marl_mrt2a
 
 2. Create a conda environment:
 ```bash
-conda create -n marl_mrt2a python=3.10
+conda create -n marl_mrt2a python=3.10 -y
 conda activate marl_mrt2a
 conda install pip -y
 ```
 
 3. Install the base environment and the baseline (development mode)
 ```bash
-cd env
+cd marl_mrt2a/env
 pip install -e .
 pip install -U pygame --user
-conda install -c conda-forge libstdcxx-ng
+conda install -c conda-forge libstdcxx-ng -y
 cd ../PCFA
 pip install -e .
 cd ../
 ```
 
-4. Install MARL dependencies:
+4. Setup Weights & Biases for experiment tracking
 ```bash
-cd marl
 pip install wandb
 wandb login
+```
+
+5. Install MARL dependencies:
+```bash
+cd marl
 pip install -r requirements.txt
 ```
 

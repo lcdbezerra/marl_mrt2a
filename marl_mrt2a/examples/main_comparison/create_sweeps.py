@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Unified script to create all sweeps for main comparison experiments.
-Supports PCFA (market-based baseline), hardcoded (heuristic baseline), 
+Supports PCFA (market-based baseline), 
 our model (MAPPO augmented with spatial actions, intention sharing, and task revision),
 and ablation studies (tuned down versions of our model).
 """
@@ -21,6 +21,7 @@ CONST_PARAMS = {
     "gymrt2a.N_obj": {"value": [4, 3, 3]},
     "gymrt2a.obj_lvl_rwd_exp": {"value": 2},
     "gymrt2a.view_self": {"value": False},
+    "gymrt2a.view_range": {"value": 5},
 }
 
 # Common MARL-specific parameters
@@ -42,7 +43,6 @@ MARL_CONST_PARAMS = {
     "q_nstep": {"value": 5},
     "obs_agent_id": {"value": False},
     "buffer_size": {"value": 10},
-    "test_nepisode": {"value": 96},
     "target_update_interval_or_tau": {"value": 200},
 }
 
@@ -60,7 +60,6 @@ def create_pcfa_sweep(project="marl_mrt2a", quick_mode=False):
         "parameters": {
             **CONST_PARAMS,
             "gymrt2a.N_comm": {"value": 4},
-            "gymrt2a.view_range": {"value": 5},
             "gymrt2a.comm_range": {"values": [20, 8] if not quick_mode else [8]},
             "gymrt2a.action_grid": {"value": True},
             "gymrt2a.share_intention": {"value": False},
@@ -92,50 +91,11 @@ def create_pcfa_sweep(project="marl_mrt2a", quick_mode=False):
         return None
 
 
-def create_hardcoded_sweep(project="marl_mrt2a", quick_mode=False):
-    """Create a hardcoded (heuristic baseline) sweep configuration for main comparison."""
-    
-    sweep_config = {
-        "name": "PAPER: Hardcoded (Heuristic Baseline)" + (" (Quick)" if quick_mode else ""),
-        "method": "grid",
-        "metric": {
-            "goal": "maximize",
-            "name": "best_test_return_mean",
-        },
-        "parameters": {
-            **CONST_PARAMS,
-            "gymrt2a.N_comm": {"value": 2},
-            "gymrt2a.view_range": {"value": 5},
-            "gymrt2a.comm_range": {"value": 8},
-            "gymrt2a.action_grid": {"value": True},
-            "gymrt2a.share_intention": {"value": "target"},
-            "gymrt2a.respawn": {"values": [True, .01, .02, .03, .04] if not quick_mode else [True]},
-            "env_args.hardcoded": {"value": True},
-            "agent_reeval_rate": {"values": True},
-            "seed": {"values": [10, 20, 30, 40, 50] if not quick_mode else [10]},
-            "filter_avail_by_objects": {"value": True},
-            "test_nepisode": {"value": 8 if quick_mode else 96},
-        },
-    }
-    
-    print("Creating hardcoded baseline sweep...")
-    print(f"Project: {project}")
-    print(f"Quick mode: {quick_mode}")
-    
-    try:
-        sweep_id = wandb.sweep(sweep_config, project=project)
-        print(f"✓ Hardcoded sweep created with ID: {sweep_id}")
-        return sweep_id
-    except Exception as e:
-        print(f"✗ Failed to create hardcoded sweep: {e}")
-        return None
-
-
-def create_marl_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False):
+def create_marl_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False, include_ablations=True):
     """Create our model (MAPPO augmented with spatial actions, intention sharing, and task revision) sweep configuration for main comparison."""
     
     sweep_config = {
-        "name": "PAPER: Our Model (MAPPO + Spatial Actions + Intention Sharing + Task Revision)" + (" (Quick)" if quick_mode else "") + (" (Fast Train)" if quick_train else ""),
+        "name": "PAPER: Our Model + Ablations" + (" (Quick)" if quick_mode else "") + (" (Fast Train)" if quick_train else ""),
         "method": "grid",
         "metric": {
             "goal": "maximize",
@@ -145,18 +105,17 @@ def create_marl_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False)
             **MARL_CONST_PARAMS,
             "critic_arch": {"value": "unet,4,1,2&batchNorm1d;linear,25;relu" if quick_train else "unet,8,1,2&batchNorm1d;linear,50;relu"},
             "agent_arch": {"value": "unet,4,1,2&" if quick_train else "unet,8,1,2&"},
-            "gymrt2a.view_range": {"values": [3, 5, 8] if not quick_mode else [5]},
             "action_grid": {"value": True},
             "gymrt2a.share_intention": {
-                "values": ["target", "path", "channel", False] if not quick_mode else ["path", False]
+                "values": ["path", False] if include_ablations else ["path"],
             },
             "gymrt2a.respawn": {
                 "values": [True, .01, .02, .03, .04] if not quick_mode else [True, .02]
             },
             "seed": {"values": [10, 20, 30, 40, 50] if not quick_mode else [10, 20]},
-            "agent_reeval_rate": {"values": [True, 0] if not quick_mode else [True]},
+            "agent_reeval_rate": {"values": [True, 0] if include_ablations else [True]},
             "filter_avail_by_objects": {"value": True},
-            "t_max": {"value": 100_000 if quick_train else 4_000_000},
+            "t_max": {"value": 100_000 if quick_train else 3_000_000},
             "test_nepisode": {"value": 8 if quick_train else 96},
         },
     }
@@ -165,10 +124,12 @@ def create_marl_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False)
     print(f"Project: {project}")
     print(f"Quick mode: {quick_mode}")
     print(f"Quick train: {quick_train}")
+    print(f"Include ablations: {include_ablations}")
     
     try:
         sweep_id = wandb.sweep(sweep_config, project=project)
-        print(f"✓ Our model sweep created with ID: {sweep_id}")
+        sweep_name = "Our model" + (" + ablations" if include_ablations else "")
+        print(f"✓ {sweep_name} sweep created with ID: {sweep_id}")
         return sweep_id
     except Exception as e:
         print(f"✗ Failed to create our model sweep: {e}")
@@ -176,10 +137,10 @@ def create_marl_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False)
 
 
 def create_steering_actions_sweep(project="marl_mrt2a", quick_mode=False, quick_train=False):
-    """Create ablation studies (tuned down versions of our model) sweep configuration for main comparison."""
+    """Create steering actions sweep configuration for main comparison."""
     
     sweep_config = {
-        "name": "PAPER: Ablation Studies (Tuned Down Versions of Our Model)" + (" (Quick)" if quick_mode else "") + (" (Fast Train)" if quick_train else ""),
+        "name": "PAPER: Steering actions" + (" (Quick)" if quick_mode else "") + (" (Fast Train)" if quick_train else ""),
         "method": "grid",
         "metric": {
             "goal": "maximize",
@@ -189,7 +150,6 @@ def create_steering_actions_sweep(project="marl_mrt2a", quick_mode=False, quick_
             **MARL_CONST_PARAMS,
             "critic_arch": {"value": "unet,4,1,2&batchNorm1d;linear,25;relu" if quick_train else "unet,8,1,2&batchNorm1d;linear,50;relu"},
             "agent_arch": {"value": "unet,4,1,2&" if quick_train else "unet,8,1,2&"},
-            "gymrt2a.view_range": {"values": [3, 5, 8] if not quick_mode else [5]},
             "action_grid": {"value": False},  # Key difference - steering actions
             "gymrt2a.share_intention": {"value": False},
             "gymrt2a.respawn": {
@@ -203,24 +163,24 @@ def create_steering_actions_sweep(project="marl_mrt2a", quick_mode=False, quick_
         },
     }
     
-    print("Creating ablation studies (tuned down versions of our model) sweep...")
+    print("Creating steering actions sweep...")
     print(f"Project: {project}")
     print(f"Quick mode: {quick_mode}")
     print(f"Quick train: {quick_train}")
     
     try:
         sweep_id = wandb.sweep(sweep_config, project=project)
-        print(f"✓ Ablation studies sweep created with ID: {sweep_id}")
+        print(f"✓ Steering actions sweep created with ID: {sweep_id}")
         return sweep_id
     except Exception as e:
-        print(f"✗ Failed to create ablation studies sweep: {e}")
+        print(f"✗ Failed to create steering actions sweep: {e}")
         return None
 
 
 def main():
     parser = argparse.ArgumentParser(description="Create all sweeps for main comparison")
     parser.add_argument("--sweep", type=str, 
-                       choices=["pcfa", "hardcoded", "marl", "steering", "all"], 
+                       choices=["pcfa", "marl", "steering", "all"], 
                        default="all", help="Which sweep(s) to create")
     
     # Common W&B settings
@@ -232,6 +192,8 @@ def main():
                        help="Use fewer parameter combinations for quick testing")
     parser.add_argument("--quick-train", action="store_true",
                        help="Use shorter training time for MARL sweeps")
+    parser.add_argument("--include-ablations", action="store_true", default=False,
+                       help="Include ablation studies in MARL sweep (default: False)")
     
     args = parser.parse_args()
     
@@ -246,19 +208,12 @@ def main():
         if sweep_id:
             created_sweeps.append(("pcfa", f"{args.project}/{sweep_id}"))
     
-    if args.sweep in ["hardcoded", "all"]:
-        sweep_id = create_hardcoded_sweep(
-            project=args.project,
-            quick_mode=args.quick
-        )
-        if sweep_id:
-            created_sweeps.append(("hardcoded", f"{args.project}/{sweep_id}"))
-    
     if args.sweep in ["marl", "all"]:
         sweep_id = create_marl_sweep(
             project=args.project,
             quick_mode=args.quick,
-            quick_train=args.quick_train
+            quick_train=args.quick_train,
+            include_ablations=args.include_ablations
         )
         if sweep_id:
             created_sweeps.append(("marl", f"{args.project}/{sweep_id}"))

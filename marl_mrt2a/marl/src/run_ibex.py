@@ -21,7 +21,7 @@ import main
 parser = argparse.ArgumentParser(description="Training Script")
 
 def config2txt(config):
-    discard_start_with = "mrt2a"
+    discard_start_with = "gymrt2a"
     keys_to_discard = ["config", "env_config", "save_model", "save_path", "strategy"]
     requires_quotes = ["critic_arch", "agent_arch"]
 
@@ -71,7 +71,7 @@ def run_hardcoded(env, config):
         env.close()
 
 
-def train(config=None, default=False, online=False):
+def train(config=None, default=False, online=False, cuda=False):
     mode = "online" if online else "offline"
     with wandb.init(config=config, mode=mode) as run:
         config = wandb.config
@@ -120,7 +120,7 @@ def train(config=None, default=False, online=False):
             config["batch_size_run"] = n_parallel # add number of parallel envs to config
             txt_args = f'main.py --config={config["config"]} --env-config={config["env_config"]} with env_args.key="{env_key}" {config2txt(config)}save_model=True save_path="{save_path}" wandb_sweep=True'
             txt_args += f" runner=parallel batch_size_run={n_parallel}"
-            if not IBEX and not DSA:
+            if not IBEX and not DSA and not cuda:
                 txt_args += " use_cuda=False"
             print("python3 " + txt_args)
 
@@ -178,10 +178,12 @@ if __name__ == "__main__":
     parser.add_argument("wandb_sweep", type=str, help="WANDB Sweep ID")
     parser.add_argument("-o", "--online", action="store_true", help="Upload experiment to WANDB")
     parser.add_argument("-c", "--count", type=int, default=0, help="Run count (optional)")
+    parser.add_argument("--cuda", action="store_true", help="Use CUDA (default: False)")
     args = parser.parse_args()
     default_config = False
 
     sweep_id = args.wandb_sweep
     run_count = args.count if args.count > 0 else None
     online = args.online
-    wandb.agent(sweep_id, lambda *args, **kw: train(default=default_config, online=online, *args, **kw), count=run_count)
+    cuda = args.cuda
+    wandb.agent(sweep_id, lambda *args, **kw: train(default=default_config, online=online, cuda=cuda, *args, **kw), count=run_count)
